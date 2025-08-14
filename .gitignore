@@ -46,15 +46,7 @@ runs/scripts/
 **/monitoring/
 events.out.tfevents.*
 
-# Generated figures and visualizations
-paper_figures/
-*.png
-*.jpg
-*.jpeg
-*.svg
-*.pdf
-!README*.png
-!docs/**/*.png
+
 
 # Model checkpoints and weights
 checkpoints/
