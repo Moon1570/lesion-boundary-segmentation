@@ -53,17 +53,38 @@ class CanonicalPreprocessor:
         interpolation = cv2.INTER_NEAREST if is_mask else cv2.INTER_LINEAR
         resized = cv2.resize(image, (new_w, new_h), interpolation=interpolation)
         
-        # If resized image is larger than target, crop from center
+        # Handle case where resized dimensions might be larger than target due to scaling
         if new_h > self.target_size or new_w > self.target_size:
-            start_h = (new_h - self.target_size) // 2
-            start_w = (new_w - self.target_size) // 2
+            # Center crop if any dimension exceeds target
+            start_h = max(0, (new_h - self.target_size) // 2)
+            start_w = max(0, (new_w - self.target_size) // 2)
+            end_h = min(new_h, start_h + self.target_size)
+            end_w = min(new_w, start_w + self.target_size)
+            
             if len(image.shape) == 3:
-                resized = resized[start_h:start_h + self.target_size, start_w:start_w + self.target_size, :]
+                cropped = resized[start_h:end_h, start_w:end_w, :]
+                # If cropped is smaller than target, pad it
+                if cropped.shape[0] < self.target_size or cropped.shape[1] < self.target_size:
+                    padded = np.zeros((self.target_size, self.target_size, image.shape[2]), dtype=image.dtype)
+                    pad_h = (self.target_size - cropped.shape[0]) // 2
+                    pad_w = (self.target_size - cropped.shape[1]) // 2
+                    padded[pad_h:pad_h + cropped.shape[0], pad_w:pad_w + cropped.shape[1], :] = cropped
+                    return padded
+                else:
+                    return cropped
             else:
-                resized = resized[start_h:start_h + self.target_size, start_w:start_w + self.target_size]
-            return resized
+                cropped = resized[start_h:end_h, start_w:end_w]
+                # If cropped is smaller than target, pad it
+                if cropped.shape[0] < self.target_size or cropped.shape[1] < self.target_size:
+                    padded = np.zeros((self.target_size, self.target_size), dtype=image.dtype)
+                    pad_h = (self.target_size - cropped.shape[0]) // 2
+                    pad_w = (self.target_size - cropped.shape[1]) // 2
+                    padded[pad_h:pad_h + cropped.shape[0], pad_w:pad_w + cropped.shape[1]] = cropped
+                    return padded
+                else:
+                    return cropped
         
-        # Center padding
+        # Center padding for smaller images
         pad_h = (self.target_size - new_h) // 2
         pad_w = (self.target_size - new_w) // 2
         
