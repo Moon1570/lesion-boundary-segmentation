@@ -26,6 +26,9 @@ share/python-wheels/
 *.egg
 MANIFEST
 data
+runs/ckpts/
+runs/training_masked_only/logs/
+runs/training_masked_only/checkpoints/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
