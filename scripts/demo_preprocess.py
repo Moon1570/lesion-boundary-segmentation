@@ -37,9 +37,9 @@ def demo_preprocessing():
     
     print(f"Demo preprocessing on {len(image_files)} images...")
     
-    # Create demo output directory
-    demo_dir = Path("demo_preprocessing")
-    demo_dir.mkdir(exist_ok=True)
+    # Create demo output directory in runs/figs
+    demo_dir = Path("runs/figs/preprocessing_demo")
+    demo_dir.mkdir(parents=True, exist_ok=True)
     
     for i, img_path in enumerate(image_files):
         print(f"Processing {img_path.name}...")
