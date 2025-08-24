@@ -25,10 +25,59 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-data
+# Data and training artifacts
+data/
+runs/
+*.pth
+*.pt
+*.ckpt
+
+# Training runs and checkpoints
 runs/ckpts/
-runs/training_masked_only/logs/
-runs/training_masked_only/checkpoints/
+runs/monai_unet/
+runs/training_masked_only/
+runs/figs/
+runs/preds/
+runs/scripts/
+
+# TensorBoard logs
+**/tensorboard/
+**/logs/
+**/monitoring/
+events.out.tfevents.*
+
+# Generated figures and visualizations
+paper_figures/
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.pdf
+!README*.png
+!docs/**/*.png
+
+# Model checkpoints and weights
+checkpoints/
+models/*.pth
+models/*.pt
+best_*.pth
+latest_*.pth
+checkpoint_*.pth
+
+# Training logs
+*.log
+training.log
+debug.log
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+.DS_Store
+Thumbs.db
+
+# Python cache and bytecode
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -183,3 +232,54 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+# Machine Learning specific
+# Weights and model files
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+*.joblib
+*.model
+*.weights
+
+# Dataset and preprocessing
+*.npy
+*.npz
+*.mat
+*.csv
+*.tsv
+*.xlsx
+*.parquet
+*_processed/
+*_cache/
+
+# Experimental and debugging
+experiments/
+debug/
+scratch/
+test_outputs/
+wandb/
+mlruns/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Custom scripts (often contain sensitive paths)
+fix_*.py
+inspect_*.py
+test_*.py
+debug_*.py
