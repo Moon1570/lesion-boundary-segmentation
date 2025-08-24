@@ -484,6 +484,19 @@ class LesionSegmentationTrainer:
         """Enhanced checkpoint saving with comprehensive metadata."""
         timestamp = time.strftime('%Y%m%d_%H%M%S')
         
+        # Check if this is the best model and update before creating checkpoint
+        val_dice = metrics.get('dice', 0)
+        val_loss = metrics.get('loss', float('inf'))
+        
+        # Update best metrics
+        is_new_best_dice = val_dice > self.best_val_dice or is_best
+        is_new_best_loss = val_loss < self.best_val_loss
+        
+        if is_new_best_dice:
+            self.best_val_dice = val_dice
+        if is_new_best_loss:
+            self.best_val_loss = val_loss
+        
         checkpoint = {
             'epoch': epoch,
             'model_state_dict': self.model.state_dict(),
@@ -508,10 +521,8 @@ class LesionSegmentationTrainer:
         latest_path = self.checkpoints_dir / 'latest_checkpoint.pth'
         torch.save(checkpoint, latest_path)
         
-        # Check if this is the best model
-        val_dice = metrics.get('dice', 0)
-        if val_dice > self.best_val_dice or is_best:
-            self.best_val_dice = val_dice
+        # Save best model if this is a new best (based on Dice score primarily)
+        if is_new_best_dice:
             best_path = self.checkpoints_dir / 'best_checkpoint.pth'
             torch.save(checkpoint, best_path)
             
@@ -522,11 +533,16 @@ class LesionSegmentationTrainer:
             self.logger.info(f"New best model saved! Dice: {val_dice:.4f}")
             print(f"  New best model saved! Dice: {val_dice:.4f}")
         
+        # Log if we got a new best loss (even if not saving as best model)
+        if is_new_best_loss:
+            self.logger.info(f"New best validation loss: {val_loss:.4f}")
+            print(f"  New best loss: {val_loss:.4f}")
+        
         # Clean up old checkpoints (keep last 5 epoch checkpoints)
         self._cleanup_old_checkpoints()
         
         # Log checkpoint info
-        self.logger.info(f"Checkpoint saved: epoch {epoch+1}, dice: {val_dice:.4f}")
+        self.logger.info(f"Checkpoint saved: epoch {epoch+1}, dice: {val_dice:.4f}, loss: {val_loss:.4f}")
         print(f"  Checkpoint saved: {checkpoint_path.name}")
     
     def _cleanup_old_checkpoints(self, keep_last: int = 5):
