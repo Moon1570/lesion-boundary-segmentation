@@ -29,7 +29,16 @@ import warnings
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.tensorboard import SummaryWriter
+
+# Handle TensorBoard import conflict
+try:
+    from torch.utils.tensorboard import SummaryWriter
+    TENSORBOARD_AVAILABLE = True
+except ImportError:
+    print("Warning: TensorBoard not available. Continuing without logging.")
+    TENSORBOARD_AVAILABLE = False
+    SummaryWriter = None
+
 from torch.amp import autocast, GradScaler
 import numpy as np
 from tqdm import tqdm
@@ -126,6 +135,8 @@ class LesionSegmentationTrainer:
     
     def setup_model(self):
         """Initialize the segmentation model."""
+        from models.enhanced_unet import AttentionUNet, UNetPlusPlus
+        
         model_config = self.config['model']
         model_name = model_config['name'].lower()
         
@@ -144,10 +155,27 @@ class LesionSegmentationTrainer:
                 channels=model_config.get('channels', [32, 64, 128, 256, 512]),
                 strides=model_config.get('strides', [2, 2, 2, 2]),
             )
+        elif model_name == 'attention_unet':
+            self.model = AttentionUNet(
+                n_channels=model_config.get('in_channels', 3),
+                n_classes=model_config.get('out_channels', 1),
+                channels=model_config.get('channels', [64, 128, 256, 512, 1024])
+            )
+        elif model_name == 'unet_plusplus':
+            self.model = UNetPlusPlus(
+                n_channels=model_config.get('in_channels', 3),
+                n_classes=model_config.get('out_channels', 1),
+                deep_supervision=model_config.get('deep_supervision', True)
+            )
         else:
             raise ValueError(f"Unknown model: {model_name}")
         
         self.model = self.model.to(self.device)
+        
+        # Print model info
+        total_params = sum(p.numel() for p in self.model.parameters())
+        trainable_params = sum(p.numel() for p in self.model.parameters() if p.requires_grad)
+        print(f"Model Parameters: {total_params:,} total, {trainable_params:,} trainable")
         
         # Print model info
         total_params = sum(p.numel() for p in self.model.parameters())
@@ -173,6 +201,8 @@ class LesionSegmentationTrainer:
     
     def setup_loss_function(self):
         """Setup loss function."""
+        from models.advanced_losses import AdvancedCombinedLoss, FocalLoss as AdvancedFocalLoss, TverskyLoss, IoULoss
+        
         loss_config = self.config['loss']
         loss_name = loss_config['name'].lower()
         
@@ -204,6 +234,18 @@ class LesionSegmentationTrainer:
                 focal_weight=weights.get('focal', 0.0),
                 boundary_weight=weights.get('boundary', 0.2)
             )
+        elif loss_name == 'advanced_combined':
+            weights = loss_config.get('weights', {
+                'bce': 0.25, 'focal': 0.25, 'dice': 0.2, 'tversky': 0.15, 'iou': 0.15
+            })
+            self.criterion = AdvancedCombinedLoss(weights=weights)
+        elif loss_name == 'tversky':
+            self.criterion = TverskyLoss(
+                alpha=loss_config.get('tversky_alpha', 0.3),
+                beta=loss_config.get('tversky_beta', 0.7)
+            )
+        elif loss_name == 'iou':
+            self.criterion = IoULoss()
         else:
             raise ValueError(f"Unknown loss function: {loss_name}")
         
@@ -306,7 +348,10 @@ class LesionSegmentationTrainer:
     
     def setup_logging(self):
         """Setup enhanced logging and visualization."""
-        self.writer = SummaryWriter(log_dir=self.tensorboard_dir)
+        if TENSORBOARD_AVAILABLE:
+            self.writer = SummaryWriter(log_dir=self.tensorboard_dir)
+        else:
+            self.writer = None
         self.visualizer = TrainingVisualizer(self.predictions_dir)
         
         # Setup text logging
@@ -333,20 +378,22 @@ class LesionSegmentationTrainer:
         self.logger.addHandler(console_handler)
         
         # Log model architecture to TensorBoard
-        sample_input = torch.randn(1, 3, 384, 384).to(self.device)
-        self.writer.add_graph(self.model, sample_input)
+        if self.writer is not None:
+            sample_input = torch.randn(1, 3, 384, 384).to(self.device)
+            self.writer.add_graph(self.model, sample_input)
         
         # Log hyperparameters
-        hparams = {
-            'model': self.config['model']['name'],
-            'loss': self.config['loss']['name'],
-            'optimizer': self.config['optimizer']['name'],
-            'lr': self.config['optimizer']['lr'],
-            'batch_size': self.config['data']['batch_size'],
-            'image_size': self.config['data']['image_size'],
-            'use_amp': self.use_amp
-        }
-        self.writer.add_hparams(hparams, {})
+        if self.writer is not None:
+            hparams = {
+                'model': self.config['model']['name'],
+                'loss': self.config['loss']['name'],
+                'optimizer': self.config['optimizer']['name'],
+                'lr': self.config['optimizer']['lr'],
+                'batch_size': self.config['data']['batch_size'],
+                'image_size': self.config['data']['image_size'],
+                'use_amp': self.use_amp
+            }
+            self.writer.add_hparams(hparams, {})
         
         # Initial log
         self.logger.info("Training setup completed")
@@ -460,15 +507,16 @@ class LesionSegmentationTrainer:
                    val_metrics: Dict[str, float], epoch: int):
         """Log metrics to tensorboard and console."""
         # Log to tensorboard
-        for key, value in train_metrics.items():
-            self.writer.add_scalar(f'Train/{key}', value, epoch)
-        
-        for key, value in val_metrics.items():
-            self.writer.add_scalar(f'Val/{key}', value, epoch)
-        
-        # Log learning rate
-        current_lr = self.optimizer.param_groups[0]['lr']
-        self.writer.add_scalar('Learning_Rate', current_lr, epoch)
+        if self.writer is not None:
+            for key, value in train_metrics.items():
+                self.writer.add_scalar(f'Train/{key}', value, epoch)
+            
+            for key, value in val_metrics.items():
+                self.writer.add_scalar(f'Val/{key}', value, epoch)
+            
+            # Log learning rate
+            current_lr = self.optimizer.param_groups[0]['lr']
+            self.writer.add_scalar('Learning_Rate', current_lr, epoch)
         
         # Console output
         print(f"\nEpoch {epoch+1} Results:")
@@ -724,6 +772,9 @@ class LesionSegmentationTrainer:
                            val_metrics: Dict[str, float], epoch: int):
         """Enhanced TensorBoard logging."""
         
+        if self.writer is None:
+            return
+        
         # Loss curves
         self.writer.add_scalars('Loss', {
             'Train': train_metrics.get('loss', 0),
@@ -867,10 +918,10 @@ def parse_args():
     parser.add_argument('--config', type=str, default=None,
                        help='Path to configuration file')
     parser.add_argument('--model', type=str, default='custom_unet',
-                       choices=['custom_unet', 'monai_unet'],
+                       choices=['custom_unet', 'monai_unet', 'attention_unet', 'unet_plusplus'],
                        help='Model architecture')
     parser.add_argument('--loss', type=str, default='combined',
-                       choices=['bce', 'dice', 'focal', 'boundary', 'combined'],
+                       choices=['bce', 'dice', 'focal', 'boundary', 'combined', 'advanced_combined', 'tversky', 'iou'],
                        help='Loss function')
     parser.add_argument('--epochs', type=int, default=100,
                        help='Number of training epochs')
