@@ -1,0 +1,38 @@
+name,type,parameters,in_channels,out_channels,kernel_size
+inc.double_conv.0,Conv2d,864,3.0,32.0,"(3, 3)"
+inc.double_conv.1,BatchNorm2d,64,,,
+inc.double_conv.3,Conv2d,9216,32.0,32.0,"(3, 3)"
+inc.double_conv.4,BatchNorm2d,64,,,
+down1.maxpool_conv.1.double_conv.0,Conv2d,18432,32.0,64.0,"(3, 3)"
+down1.maxpool_conv.1.double_conv.1,BatchNorm2d,128,,,
+down1.maxpool_conv.1.double_conv.3,Conv2d,36864,64.0,64.0,"(3, 3)"
+down1.maxpool_conv.1.double_conv.4,BatchNorm2d,128,,,
+down2.maxpool_conv.1.double_conv.0,Conv2d,73728,64.0,128.0,"(3, 3)"
+down2.maxpool_conv.1.double_conv.1,BatchNorm2d,256,,,
+down2.maxpool_conv.1.double_conv.3,Conv2d,147456,128.0,128.0,"(3, 3)"
+down2.maxpool_conv.1.double_conv.4,BatchNorm2d,256,,,
+down3.maxpool_conv.1.double_conv.0,Conv2d,294912,128.0,256.0,"(3, 3)"
+down3.maxpool_conv.1.double_conv.1,BatchNorm2d,512,,,
+down3.maxpool_conv.1.double_conv.3,Conv2d,589824,256.0,256.0,"(3, 3)"
+down3.maxpool_conv.1.double_conv.4,BatchNorm2d,512,,,
+down4.maxpool_conv.1.double_conv.0,Conv2d,589824,256.0,256.0,"(3, 3)"
+down4.maxpool_conv.1.double_conv.1,BatchNorm2d,512,,,
+down4.maxpool_conv.1.double_conv.3,Conv2d,589824,256.0,256.0,"(3, 3)"
+down4.maxpool_conv.1.double_conv.4,BatchNorm2d,512,,,
+up1.conv.double_conv.0,Conv2d,1179648,512.0,256.0,"(3, 3)"
+up1.conv.double_conv.1,BatchNorm2d,512,,,
+up1.conv.double_conv.3,Conv2d,294912,256.0,128.0,"(3, 3)"
+up1.conv.double_conv.4,BatchNorm2d,256,,,
+up2.conv.double_conv.0,Conv2d,294912,256.0,128.0,"(3, 3)"
+up2.conv.double_conv.1,BatchNorm2d,256,,,
+up2.conv.double_conv.3,Conv2d,73728,128.0,64.0,"(3, 3)"
+up2.conv.double_conv.4,BatchNorm2d,128,,,
+up3.conv.double_conv.0,Conv2d,73728,128.0,64.0,"(3, 3)"
+up3.conv.double_conv.1,BatchNorm2d,128,,,
+up3.conv.double_conv.3,Conv2d,18432,64.0,32.0,"(3, 3)"
+up3.conv.double_conv.4,BatchNorm2d,64,,,
+up4.conv.double_conv.0,Conv2d,18432,64.0,32.0,"(3, 3)"
+up4.conv.double_conv.1,BatchNorm2d,64,,,
+up4.conv.double_conv.3,Conv2d,9216,32.0,32.0,"(3, 3)"
+up4.conv.double_conv.4,BatchNorm2d,64,,,
+outc.conv,Conv2d,33,32.0,1.0,"(1, 1)"

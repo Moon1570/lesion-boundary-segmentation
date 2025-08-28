@@ -256,7 +256,7 @@ class ISIC2018Dataset(Dataset):
             mask = mask / 255.0
         
         # Threshold at 0.5 to ensure binary values
-        mask = (mask > 0.5).astype(np.uint8)
+        mask = (mask > 0.5).astype(np.float32)  # Use float32 instead of uint8
         
         return mask
     
