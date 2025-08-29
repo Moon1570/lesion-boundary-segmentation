@@ -5,6 +5,8 @@
 [![PyTorch](https://img.shields.io/badge/pytorch-2.5.1+-red.svg)](https://pytorch.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+Paper title: Lightweight Ensembles and Reproducible Baselines for Skin Lesion Segmentation: A Study of U-Net Variants on ISIC-2018
+
 A deep learning framework for accurate segmentation of skin lesion boundaries in dermoscopic images using the ISIC2018 dataset. This project implements state-of-the-art preprocessing techniques and provides a comprehensive pipeline for lesion boundary analysis.
 
 ## 🎯 Project Overview
