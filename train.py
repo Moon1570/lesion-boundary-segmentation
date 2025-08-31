@@ -18,6 +18,9 @@ Usage:
 """
 
 import os
+# Silence TensorFlow oneDNN messages
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import sys
 import argparse
 import json
@@ -48,7 +51,10 @@ sys.path.append(str(Path(__file__).parent))
 
 from scripts.dataset import create_data_loaders, ISIC2018Dataset
 from models.unet import UNet, UNetMonai
+from models.enhanced_unet import AttentionUNet, UNetPlusPlus
+from models.mamba_unet import MambaUNet, LightweightMambaUNet
 from models.losses import DiceLoss, FocalLoss, BoundaryLoss, CombinedLoss
+from models.advanced_losses import FocalLoss as AdvancedFocalLoss, TverskyLoss, IoULoss, AdvancedCombinedLoss
 from utils.metrics import SegmentationMetrics
 from utils.visualization import TrainingVisualizer
 from utils.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
@@ -166,6 +172,33 @@ class LesionSegmentationTrainer:
                 n_channels=model_config.get('in_channels', 3),
                 n_classes=model_config.get('out_channels', 1),
                 deep_supervision=model_config.get('deep_supervision', True)
+            )
+        elif model_name == 'mamba_unet':
+            self.model = MambaUNet(
+                n_channels=model_config.get('n_channels', 3),
+                n_classes=model_config.get('n_classes', 1),
+                channels=model_config.get('channels', [64, 128, 256, 512]),
+                d_state=model_config.get('d_state', 16),
+                d_conv=model_config.get('d_conv', 4),
+                expand=model_config.get('expand', 2),
+                use_mamba_encoder=model_config.get('use_mamba_encoder', True),
+                use_mamba_decoder=model_config.get('use_mamba_decoder', True),
+                use_mamba_bottleneck=model_config.get('use_mamba_bottleneck', True),
+            )
+        elif model_name == 'lightweight_mamba_unet':
+            self.model = LightweightMambaUNet(
+                n_channels=model_config.get('n_channels', 3),
+                n_classes=model_config.get('n_classes', 1),
+                base_channels=model_config.get('base_channels', 32),
+                d_state=model_config.get('d_state', 8),
+                d_conv=model_config.get('d_conv', 3),
+                expand=model_config.get('expand', 1.5),
+            )
+        elif model_name == 'unetmamba':
+            from models.unetmamba_efficient import LightweightUNetMamba
+            self.model = LightweightUNetMamba(
+                in_channels=model_config.get('n_channels', 3),
+                num_classes=model_config.get('n_classes', 1),
             )
         else:
             raise ValueError(f"Unknown model: {model_name}")
@@ -918,7 +951,7 @@ def parse_args():
     parser.add_argument('--config', type=str, default=None,
                        help='Path to configuration file')
     parser.add_argument('--model', type=str, default='custom_unet',
-                       choices=['custom_unet', 'monai_unet', 'attention_unet', 'unet_plusplus'],
+                       choices=['custom_unet', 'monai_unet', 'attention_unet', 'unet_plusplus', 'mamba_unet', 'lightweight_mamba_unet', 'unetmamba'],
                        help='Model architecture')
     parser.add_argument('--loss', type=str, default='combined',
                        choices=['bce', 'dice', 'focal', 'boundary', 'combined', 'advanced_combined', 'tversky', 'iou'],
