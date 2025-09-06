@@ -1,0 +1,94 @@
+{
+  "model": {
+    "name": "unetmamba",
+    "n_channels": 3,
+    "n_classes": 1,
+    "comment": "Fine-tuning UNetMamba (0.8100 baseline) for enhanced performance"
+  },
+  "data": {
+    "data_dir": "data/ISIC2018_proc",
+    "splits_dir": "splits",
+    "batch_size": 10,
+    "num_workers": 4,
+    "image_size": 384,
+    "pin_memory": true,
+    "use_test_split": false,
+    "augmentations": {
+      "enabled": true,
+      "rotation": 25,
+      "flip_prob": 0.6,
+      "brightness": 0.25,
+      "contrast": 0.25,
+      "hue": 0.08,
+      "saturation": 0.2,
+      "elastic_transform": true,
+      "gaussian_noise": 0.02,
+      "mixup_alpha": 0.2,
+      "cutmix_alpha": 0.3
+    }
+  },
+  "loss": {
+    "name": "advanced_combined",
+    "weights": {
+      "bce": 0.15,
+      "focal": 0.35,
+      "dice": 0.25,
+      "tversky": 0.15,
+      "iou": 0.1
+    },
+    "focal_alpha": 1.0,
+    "focal_gamma": 3.0,
+    "tversky_alpha": 0.2,
+    "tversky_beta": 0.8
+  },
+  "optimizer": {
+    "name": "adamw",
+    "lr": 5e-6,
+    "weight_decay": 1e-6,
+    "betas": [0.9, 0.999],
+    "eps": 1e-8
+  },
+  "scheduler": {
+    "name": "cosine_warmup",
+    "warmup_epochs": 3,
+    "T_max": 40,
+    "eta_min": 1e-8,
+    "warmup_factor": 0.1
+  },
+  "training": {
+    "epochs": 40,
+    "use_amp": true,
+    "vis_freq": 3,
+    "validate_every": 1,
+    "save_best_only": false,
+    "gradient_clipping": 0.3,
+    "label_smoothing": 0.02
+  },
+  "callbacks": {
+    "early_stopping": {
+      "patience": 20,
+      "min_delta": 0.00005,
+      "mode": "max",
+      "monitor": "val_dice"
+    },
+    "model_checkpoint": {
+      "monitor": "val_dice",
+      "mode": "max",
+      "save_top_k": 10
+    },
+    "reduce_lr": {
+      "monitor": "val_dice",
+      "factor": 0.5,
+      "patience": 8,
+      "min_lr": 1e-9,
+      "mode": "max"
+    }
+  },
+  "finetune_stage": "standard",
+  "output_dir": "runs/finetune_unetmamba_standard",
+  "logging": {
+    "tensorboard": true,
+    "log_every": 5,
+    "save_predictions": true
+  }
+}

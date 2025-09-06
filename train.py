@@ -142,6 +142,8 @@ class LesionSegmentationTrainer:
     def setup_model(self):
         """Initialize the segmentation model."""
         from models.enhanced_unet import AttentionUNet, UNetPlusPlus
+        from models.duaskinseg import DuaSkinSeg
+        from models.lightweight_duaskinseg import LightweightDuaSkinSeg
         
         model_config = self.config['model']
         model_name = model_config['name'].lower()
@@ -173,6 +175,34 @@ class LesionSegmentationTrainer:
                 n_classes=model_config.get('out_channels', 1),
                 deep_supervision=model_config.get('deep_supervision', True)
             )
+        elif model_name == 'duaskinseg':
+            # Get image size from data config
+            data_config = self.config.get('data', {})
+            img_size = data_config.get('image_size', 384)
+            
+            self.model = DuaSkinSeg(
+                img_size=img_size,
+                in_channels=model_config.get('in_channels', 3),
+                num_classes=model_config.get('out_channels', 1),
+                embed_dim=model_config.get('embed_dim', 768),
+                depth=model_config.get('depth', 12),
+                num_heads=model_config.get('num_heads', 12),
+                dropout=model_config.get('dropout', 0.1)
+            )
+        elif model_name == 'lightweight_duaskinseg':
+            # Get image size from data config
+            data_config = self.config.get('data', {})
+            img_size = data_config.get('image_size', 384)
+            
+            self.model = LightweightDuaSkinSeg(
+                img_size=img_size,
+                in_channels=model_config.get('in_channels', 3),
+                num_classes=model_config.get('out_channels', 1),
+                embed_dim=model_config.get('embed_dim', 384),
+                depth=model_config.get('depth', 6),
+                num_heads=model_config.get('num_heads', 6),
+                dropout=model_config.get('dropout', 0.1)
+            )
         elif model_name == 'mamba_unet':
             self.model = MambaUNet(
                 n_channels=model_config.get('n_channels', 3),
@@ -199,6 +229,25 @@ class LesionSegmentationTrainer:
             self.model = LightweightUNetMamba(
                 in_channels=model_config.get('n_channels', 3),
                 num_classes=model_config.get('n_classes', 1),
+            )
+        elif model_name == 'hypermamba':
+            from models.hypermamba import create_hypermamba
+            variant = model_config.get('variant', 'standard')  # lightweight, standard, premium
+            self.model = create_hypermamba(
+                variant=variant,
+                in_channels=model_config.get('n_channels', 3),
+                num_classes=model_config.get('n_classes', 1),
+            )
+        elif model_name == 'quantized_mamba_unet':
+            from models.quantized_mamba_unet import create_quantized_mamba_unet
+            self.model = create_quantized_mamba_unet(
+                n_channels=model_config.get('n_channels', 3),
+                n_classes=model_config.get('n_classes', 1),
+                base_channels=model_config.get('base_channels', 24),
+                d_state=model_config.get('d_state', 8),
+                d_conv=model_config.get('d_conv', 3),
+                expand=model_config.get('expand', 1.0),
+                enable_gradient_checkpointing=model_config.get('enable_gradient_checkpointing', True),
             )
         else:
             raise ValueError(f"Unknown model: {model_name}")
@@ -951,7 +1000,7 @@ def parse_args():
     parser.add_argument('--config', type=str, default=None,
                        help='Path to configuration file')
     parser.add_argument('--model', type=str, default='custom_unet',
-                       choices=['custom_unet', 'monai_unet', 'attention_unet', 'unet_plusplus', 'mamba_unet', 'lightweight_mamba_unet', 'unetmamba'],
+                       choices=['custom_unet', 'monai_unet', 'attention_unet', 'unet_plusplus', 'duaskinseg', 'lightweight_duaskinseg', 'mamba_unet', 'lightweight_mamba_unet', 'unetmamba', 'hypermamba'],
                        help='Model architecture')
     parser.add_argument('--loss', type=str, default='combined',
                        choices=['bce', 'dice', 'focal', 'boundary', 'combined', 'advanced_combined', 'tversky', 'iou'],
