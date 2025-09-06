@@ -1,0 +1,11 @@
+{
+  "split_name": "augmented_splits_20250903_035247",
+  "created": "2025-09-03T03:52:47.631452",
+  "data_dir": "data/ISIC2018_augmented",
+  "statistics": {
+    "train": 10376,
+    "val": 0,
+    "test": 0
+  },
+  "total_samples": 10376
+}
