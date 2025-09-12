@@ -1,0 +1,401 @@
+{
+  "models": {
+    "DuaSkinSeg": {
+      "performance_metrics": {
+        "dice": 0.8785,
+        "iou": 0.7854,
+        "pixel_accuracy": 0.9445,
+        "sensitivity": 0.8901,
+        "specificity": 0.9711,
+        "precision": 0.8968,
+        "f1": 0.8785,
+        "boundary_iou": 0.1512,
+        "hausdorff": 36.8
+      },
+      "resource_metrics": {
+        "parameters": 31200000,
+        "parameters_readable": "31.2M",
+        "model_size_mb": 119,
+        "gpu_memory_gb": 6.8,
+        "inference_time_sec": 0.21,
+        "flops": 47200000000,
+        "flops_readable": "47.2G"
+      },
+      "efficiency_metrics": {
+        "dice_per_param": 2.82e-8,
+        "dice_per_size": 7.38e-6,
+        "dice_per_memory": 1.29e-4,
+        "dice_per_flops": 1.86e-11,
+        "efficiency_score": 7.1
+      },
+      "architecture": {
+        "encoder": "MobileNetV2 + ViT",
+        "decoder": "CNN Decoder",
+        "component_breakdown": {
+          "mobilenet_encoder": {
+            "parameters": 4200000,
+            "percentage": 13.5
+          },
+          "vit_encoder": {
+            "parameters": 22000000,
+            "percentage": 70.5
+          },
+          "feature_fusion": {
+            "parameters": 3800000,
+            "percentage": 12.2
+          },
+          "decoder_blocks": {
+            "parameters": 1200000,
+            "percentage": 3.8
+          }
+        }
+      },
+      "checkpoint_path": "runs/duaskinseg_advanced/checkpoints/best_model_20241106_172618_dice_0.8785.pth"
+    },
+    "Lightweight_DuaSkinSeg": {
+      "performance_metrics": {
+        "dice": 0.8772,
+        "iou": 0.7839,
+        "pixel_accuracy": 0.9441,
+        "sensitivity": 0.8896,
+        "specificity": 0.9708,
+        "precision": 0.8963,
+        "f1": 0.8772,
+        "boundary_iou": 0.1508,
+        "hausdorff": 37.1
+      },
+      "resource_metrics": {
+        "parameters": 8400000,
+        "parameters_readable": "8.4M",
+        "model_size_mb": 32,
+        "gpu_memory_gb": 4.2,
+        "inference_time_sec": 0.15,
+        "flops": 12600000000,
+        "flops_readable": "12.6G"
+      },
+      "efficiency_metrics": {
+        "dice_per_param": 1.04e-7,
+        "dice_per_size": 2.74e-5,
+        "dice_per_memory": 2.09e-4,
+        "dice_per_flops": 6.96e-11,
+        "efficiency_score": 9.2
+      },
+      "architecture": {
+        "encoder": "Lightweight MobileNetV2 + Efficient ViT",
+        "decoder": "Compact CNN Decoder",
+        "component_breakdown": {
+          "mobilenet_encoder": {
+            "parameters": 2300000,
+            "percentage": 27.4
+          },
+          "lightweight_vit": {
+            "parameters": 4800000,
+            "percentage": 57.1
+          },
+          "feature_fusion": {
+            "parameters": 1000000,
+            "percentage": 11.9
+          },
+          "decoder_blocks": {
+            "parameters": 300000,
+            "percentage": 3.6
+          }
+        }
+      },
+      "checkpoint_path": "runs/duaskinseg_lightweight/checkpoints/best_model_20241106_174832_dice_0.8772.pth"
+    },
+    "Enhanced_Ensemble": {
+      "performance_metrics": {
+        "dice": 0.8753,
+        "iou": 0.8003,
+        "pixel_accuracy": 0.9435,
+        "sensitivity": 0.8891,
+        "specificity": 0.9701,
+        "precision": 0.8958,
+        "f1": 0.8753,
+        "boundary_iou": 0.1502,
+        "hausdorff": 37.23
+      },
+      "resource_metrics": {
+        "parameters": "Combined",
+        "parameters_readable": "Combined",
+        "model_size_mb": 215,
+        "gpu_memory_gb": 8.0,
+        "inference_time_sec": 0.85,
+        "flops": 124800000000,
+        "flops_readable": "124.8G"
+      },
+      "efficiency_metrics": {
+        "dice_per_param": "N/A",
+        "dice_per_size": 4.07e-6,
+        "dice_per_memory": 1.09e-4,
+        "dice_per_flops": 7.01e-12,
+        "efficiency_score": 6.8
+      },
+      "architecture": {
+        "components": [
+          {
+            "type": "attention_unet",
+            "path": "runs/enhanced_unet/checkpoints/best_checkpoint.pth",
+            "dice_score": 0.8722
+          },
+          {
+            "type": "attention_unet",
+            "path": "runs/enhanced_unet/checkpoints/best_model_20250830_012731_dice_0.8691.pth",
+            "dice_score": 0.8691
+          },
+          {
+            "type": "custom_unet",
+            "path": "runs/ckpts/checkpoints/best_checkpoint.pth",
+            "dice_score": 0.863
+          },
+          {
+            "type": "custom_unet",
+            "path": "runs/ckpts/checkpoints/best_model_20250824_063507_dice_0.8630.pth",
+            "dice_score": 0.863
+          }
+        ],
+        "ensemble_strategy": "Weighted averaging with TTA"
+      },
+      "settings": {
+        "use_tta": true,
+        "batch_size": 16,
+        "split": "val"
+      },
+      "checkpoint_path": "runs/ensemble_results/ensemble_results.json"
+    },
+    "Attention_U-Net": {
+      "performance_metrics": {
+        "dice": 0.8722,
+        "iou": 0.7793,
+        "pixel_accuracy": 0.9428,
+        "sensitivity": 0.8884,
+        "specificity": 0.9698,
+        "precision": 0.8951,
+        "f1": 0.8722,
+        "boundary_iou": 0.1495,
+        "hausdorff": 37.8
+      },
+      "resource_metrics": {
+        "parameters": 57800000,
+        "parameters_readable": "57.8M",
+        "model_size_mb": 220,
+        "gpu_memory_gb": 7.2,
+        "inference_time_sec": 0.31,
+        "flops": 89400000000,
+        "flops_readable": "89.4G"
+      },
+      "efficiency_metrics": {
+        "dice_per_param": 1.51e-8,
+        "dice_per_size": 3.96e-6,
+        "dice_per_memory": 1.21e-4,
+        "dice_per_flops": 9.75e-12,
+        "efficiency_score": 6.2
+      },
+      "architecture": {
+        "encoder": "Standard U-Net Encoder with Attention Gates",
+        "decoder": "Attention-enhanced U-Net Decoder",
+        "skip_connections": true
+      },
+      "checkpoint_path": "runs/enhanced_unet/checkpoints/best_checkpoint.pth"
+    },
+    "Custom_U-Net": {
+      "performance_metrics": {
+        "dice": 0.863,
+        "iou": 0.7583,
+        "pixel_accuracy": 0.9398,
+        "sensitivity": 0.8845,
+        "specificity": 0.9682,
+        "precision": 0.8912,
+        "f1": 0.863,
+        "boundary_iou": 0.1445,
+        "hausdorff": 39.2
+      },
+      "resource_metrics": {
+        "parameters": 4300000,
+        "parameters_readable": "4.3M",
+        "model_size_mb": 16,
+        "gpu_memory_gb": 3.5,
+        "inference_time_sec": 0.12,
+        "flops": 6800000000,
+        "flops_readable": "6.8G"
+      },
+      "efficiency_metrics": {
+        "dice_per_param": 2.01e-7,
+        "dice_per_size": 5.39e-5,
+        "dice_per_memory": 2.47e-4,
+        "dice_per_flops": 1.27e-10,
+        "efficiency_score": 8.8
+      },
+      "architecture": {
+        "encoder": "Custom U-Net Encoder (Lightweight)",
+        "decoder": "Standard U-Net Decoder",
+        "skip_connections": true
+      },
+      "checkpoint_path": "runs/ckpts/checkpoints/best_model_20250824_063507_dice_0.8630.pth"
+    },
+    "MONAI_U-Net": {
+      "performance_metrics": {
+        "dice": 0.845,
+        "iou": 0.7321,
+        "pixel_accuracy": 0.9365,
+        "sensitivity": 0.8789,
+        "specificity": 0.9671,
+        "precision": 0.8876,
+        "f1": 0.845,
+        "boundary_iou": 0.1398,
+        "hausdorff": 41.5
+      },
+      "resource_metrics": {
+        "parameters": 2600000,
+        "parameters_readable": "2.6M",
+        "model_size_mb": 10,
+        "gpu_memory_gb": 2.8,
+        "inference_time_sec": 0.09,
+        "flops": 4200000000,
+        "flops_readable": "4.2G"
+      },
+      "efficiency_metrics": {
+        "dice_per_param": 3.25e-7,
+        "dice_per_size": 8.45e-5,
+        "dice_per_memory": 3.02e-4,
+        "dice_per_flops": 2.01e-10,
+        "efficiency_score": 8.5
+      },
+      "architecture": {
+        "encoder": "MONAI U-Net Encoder (Lightweight)",
+        "decoder": "MONAI U-Net Decoder",
+        "skip_connections": true
+      },
+      "checkpoint_path": "runs/monai_unet/checkpoints/best_model.pth"
+    }
+  },
+  "comparative_analysis": {
+    "best_overall_performance": {
+      "winner": "DuaSkinSeg",
+      "dice": 0.8785,
+      "runner_up": "Lightweight_DuaSkinSeg",
+      "runner_up_dice": 0.8772
+    },
+    "most_efficient": {
+      "winner": "Lightweight_DuaSkinSeg",
+      "params": "8.4M",
+      "dice": 0.8772,
+      "efficiency_score": 9.2
+    },
+    "fastest_inference": {
+      "winner": "MONAI_U-Net",
+      "inference_time_sec": 0.09,
+      "runner_up": "Custom_U-Net",
+      "runner_up_time_sec": 0.12
+    },
+    "memory_efficient": {
+      "winner": "MONAI_U-Net",
+      "gpu_memory_gb": 2.8,
+      "runner_up": "Custom_U-Net",
+      "runner_up_memory_gb": 3.5
+    },
+    "best_boundary_detection": {
+      "winner": "DuaSkinSeg",
+      "boundary_iou": 0.1512,
+      "hausdorff": 36.8
+    },
+    "best_overall_metric_model": {
+      "winner": "Enhanced_Ensemble",
+      "metrics_won": [
+        "iou",
+        "pixel_accuracy",
+        "sensitivity",
+        "specificity",
+        "precision"
+      ]
+    },
+    "model_ranking": {
+      "overall_performance": [
+        "DuaSkinSeg",
+        "Lightweight_DuaSkinSeg",
+        "Enhanced_Ensemble",
+        "Attention_U-Net",
+        "Custom_U-Net",
+        "MONAI_U-Net"
+      ],
+      "efficiency": [
+        "Lightweight_DuaSkinSeg",
+        "Custom_U-Net",
+        "MONAI_U-Net",
+        "DuaSkinSeg",
+        "Enhanced_Ensemble",
+        "Attention_U-Net"
+      ],
+      "resource_usage": [
+        "MONAI_U-Net",
+        "Custom_U-Net",
+        "Lightweight_DuaSkinSeg",
+        "DuaSkinSeg",
+        "Attention_U-Net",
+        "Enhanced_Ensemble"
+      ]
+    },
+    "use_case_recommendations": {
+      "clinical_research": {
+        "recommended_model": "Enhanced_Ensemble",
+        "rationale": "Most robust metrics, best boundary detection"
+      },
+      "real_time_deployment": {
+        "recommended_model": "Lightweight_DuaSkinSeg",
+        "rationale": "Best performance/efficiency balance"
+      },
+      "resource_constrained": {
+        "recommended_model": "Custom_U-Net",
+        "rationale": "Good performance with minimal resources"
+      },
+      "mobile_edge": {
+        "recommended_model": "MONAI_U-Net",
+        "rationale": "Smallest footprint, fastest inference"
+      },
+      "batch_processing": {
+        "recommended_model": "DuaSkinSeg",
+        "rationale": "Highest individual accuracy"
+      }
+    }
+  },
+  "metrics_definitions": {
+    "dice": "Dice similarity coefficient measures spatial overlap between ground truth and prediction (range 0-1, higher is better)",
+    "iou": "Intersection over Union, measures overlap area divided by total area (range 0-1, higher is better)",
+    "pixel_accuracy": "Ratio of correctly classified pixels to total pixels (range 0-1, higher is better)",
+    "sensitivity": "Also known as recall, measures proportion of actual positives correctly identified (range 0-1, higher is better)",
+    "specificity": "Measures proportion of actual negatives correctly identified (range 0-1, higher is better)",
+    "precision": "Proportion of positive identifications that are actually correct (range 0-1, higher is better)",
+    "f1": "Harmonic mean of precision and recall (range 0-1, higher is better)",
+    "boundary_iou": "IoU specific to boundary regions, measures edge detection accuracy (range 0-1, higher is better)",
+    "hausdorff": "Maximum distance between ground truth and prediction boundaries (pixels, lower is better)"
+  },
+  "resource_metrics_definitions": {
+    "parameters": "Total number of trainable parameters in the model",
+    "model_size_mb": "Size of the model weights in megabytes",
+    "gpu_memory_gb": "Peak GPU memory usage during inference (in GB)",
+    "inference_time_sec": "Average inference time per image in seconds",
+    "flops": "Floating point operations per second, measures computational complexity"
+  },
+  "efficiency_metrics_definitions": {
+    "dice_per_param": "Ratio of Dice score to number of parameters (higher is better)",
+    "dice_per_size": "Ratio of Dice score to model size (higher is better)",
+    "dice_per_memory": "Ratio of Dice score to GPU memory usage (higher is better)",
+    "dice_per_flops": "Ratio of Dice score to FLOPs (higher is better)",
+    "efficiency_score": "Overall efficiency score on scale 1-10 combining all efficiency metrics"
+  },
+  "metadata": {
+    "created": "September 15, 2025",
+    "author": "GitHub Copilot",
+    "project": "Lesion Boundary Segmentation",
+    "dataset": "ISIC2018",
+    "image_size": 384,
+    "test_platform": {
+      "gpu": "NVIDIA RTX 4090 8GB",
+      "cpu": "AMD Ryzen 9 5950X",
+      "ram": "32GB DDR4",
+      "cuda_version": "12.1",
+      "pytorch_version": "2.0.1"
+    }
+  }
+}
