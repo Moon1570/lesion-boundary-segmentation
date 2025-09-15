@@ -636,7 +636,7 @@ def analyze_data_quality():
     axes[1, 0].grid(True, alpha=0.3)
     
     # Sample problematic cases summary
-    axes[1, 1].text(0.1, 0.9, 'Data Quality Summary:', fontsize=14, fontweight='bold', 
+    axes[1, 1].text(0.1, 0.9, 'Data Quality Summary:', fontsize=16, fontweight='bold', 
                     transform=axes[1, 1].transAxes)
     
     summary_text = f"""
@@ -724,12 +724,12 @@ def create_comprehensive_summary():
     overview_data = [len(dataset), sample_size, len(areas)]
     overview_labels = ['Total Training\nSamples', 'Analyzed for\nEDA', 'Valid Lesions\nFound']
     bars = ax1.bar(overview_labels, overview_data, color=['skyblue', 'lightgreen', 'orange'], edgecolor='black')
-    ax1.set_title('Dataset Overview', fontsize=14, fontweight='bold')
+    ax1.set_title('Dataset Overview', fontsize=16, fontweight='bold')
     ax1.set_ylabel('Count')
     for bar, count in zip(bars, overview_data):
         height = bar.get_height()
         ax1.text(bar.get_x() + bar.get_width()/2., height + 20,
-                f'{count}', ha='center', va='bottom', fontsize=12, fontweight='bold')
+                f'{count}', ha='center', va='bottom', fontsize=14, fontweight='bold')
     
     # Key statistics
     ax2 = fig.add_subplot(gs[0, 2:])
