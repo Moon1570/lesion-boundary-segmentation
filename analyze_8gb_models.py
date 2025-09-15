@@ -200,7 +200,7 @@ def create_comparison_plots(results):
     
     # Create figure with subplots
     fig, axes = plt.subplots(2, 3, figsize=(18, 12))
-    fig.suptitle('Model Comparison for 8GB GPU Deployment', fontsize=16, fontweight='bold')
+    fig.suptitle('Model Comparison for 8GB GPU Deployment', fontsize=20, fontweight='bold')
     
     # Color map for categories
     category_colors = {
