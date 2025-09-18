@@ -152,7 +152,7 @@ for i, (name, dice, param, size, color, eff) in enumerate(zip(
         ax.annotate(
             name,
             (param + 5, dice + 0.001),
-            fontsize=12,
+            fontsize=14,
             ha='left',
             va='center',
             weight='bold'
@@ -161,7 +161,7 @@ for i, (name, dice, param, size, color, eff) in enumerate(zip(
         ax.annotate(
             name,
             (param, dice + 0.0025),
-            fontsize=12,
+            fontsize=14,
             ha='center',
             va='center',
             weight='bold'
@@ -174,14 +174,14 @@ x_trend = np.linspace(0, max(params)+5, 100)
 ax.plot(x_trend, p(x_trend), "--", color="gray", alpha=0.7, zorder=1)
 
 # Set axis labels and title with enhanced formatting
-ax.set_xlabel('Number of Parameters (Millions)', fontsize=16, labelpad=10)
-ax.set_ylabel('Dice Similarity Coefficient', fontsize=16, labelpad=10)
+ax.set_xlabel('Number of Parameters (Millions)', fontsize=20, labelpad=10)
+ax.set_ylabel('Dice Similarity Coefficient', fontsize=20, labelpad=10)
 ax.set_title('Model Performance vs. Complexity', fontsize=20, pad=20)
 
 # Add a subtitle with explanation
 plt.figtext(0.5, 0.01, 
            "Bubble size represents GPU memory usage; number inside shows efficiency score (1-10)",
-           ha='center', fontsize=12, fontstyle='italic')
+           ha='center', fontsize=14, fontstyle='italic')
 
 # Add legend for bubble sizes
 legend_sizes = [2.8, 4.2, 6.8, 8.0]
@@ -198,7 +198,7 @@ legend1 = ax.legend(legend_handles, legend_labels,
                   title="GPU Memory Usage",
                   frameon=True, fancybox=True, 
                   loc='upper center', bbox_to_anchor=(0.25, 0.04),
-                  fontsize=12, title_fontsize=14,
+                  fontsize=14, title_fontsize=16,
                   handletextpad=2, columnspacing=2, 
                   ncol=2)
 
