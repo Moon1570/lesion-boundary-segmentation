@@ -86,15 +86,73 @@ class PredictionVisualizer:
         """Load trained model from checkpoint."""
         checkpoint = torch.load(model_path, map_location=self.device, weights_only=False)
         
-        # Create model
-        if 'config' in checkpoint:
-            model_config = checkpoint['config']['model']
-            model = UNet(
-                n_channels=model_config.get('in_channels', 3),
-                n_classes=model_config.get('out_channels', 1)
-            )
+        # Convert path to lowercase for case-insensitive comparison
+        model_path_lower = model_path.lower()
+        
+        # Check model type from checkpoint path
+        if "lightweight_duaskinseg" in model_path_lower:
+            # Import the LightweightDuaSkinSeg model
+            from models.lightweight_duaskinseg import LightweightDuaSkinSeg
+            
+            # Create appropriate model
+            if 'config' in checkpoint:
+                model_config = checkpoint['config']['model']
+                model = LightweightDuaSkinSeg(
+                    img_size=model_config.get('img_size', 384),
+                    patch_size=model_config.get('patch_size', 16),
+                    in_channels=model_config.get('in_channels', 3),
+                    num_classes=model_config.get('out_channels', 1)
+                )
+            else:
+                model = LightweightDuaSkinSeg(img_size=384, patch_size=16, in_channels=3, num_classes=1)
+                
+            print(f"📋 Loading LightweightDuaSkinSeg model")
+        
+        elif "duaskinseg" in model_path_lower:
+            # Import the DuaSkinSeg model
+            from models.duaskinseg import DuaSkinSeg
+            
+            # Create appropriate model
+            if 'config' in checkpoint:
+                model_config = checkpoint['config']['model']
+                model = DuaSkinSeg(
+                    img_size=model_config.get('img_size', 256),
+                    in_channels=model_config.get('in_channels', 3),
+                    num_classes=model_config.get('out_channels', 1)
+                )
+            else:
+                model = DuaSkinSeg(img_size=256, in_channels=3, num_classes=1)
+            
+            print(f"📋 Loading DuaSkinSeg model")
+        
+        elif "unetmamba" in model_path_lower or "mamba_unet" in model_path_lower:
+            # Import the MambaUNet model
+            from models.mamba_unet import MambaUNet
+            
+            # Create appropriate model
+            if 'config' in checkpoint:
+                model_config = checkpoint['config']['model']
+                model = MambaUNet(
+                    img_size=model_config.get('img_size', 256),
+                    n_channels=model_config.get('in_channels', 3),
+                    n_classes=model_config.get('out_channels', 1)
+                )
+            else:
+                model = MambaUNet(img_size=256, n_channels=3, n_classes=1)
+                
+            print(f"📋 Loading MambaUNet model")
+            
         else:
-            model = UNet(n_channels=3, n_classes=1)
+            # Default: UNet model
+            print(f"📋 Loading UNet model")
+            if 'config' in checkpoint:
+                model_config = checkpoint['config']['model']
+                model = UNet(
+                    n_channels=model_config.get('in_channels', 3),
+                    n_classes=model_config.get('out_channels', 1)
+                )
+            else:
+                model = UNet(n_channels=3, n_classes=1)
         
         # Load weights
         model.load_state_dict(checkpoint['model_state_dict'])
@@ -225,25 +283,26 @@ class PredictionVisualizer:
         n_cols = 4  # Image, Mask, Prediction, Overlay
         n_rows = n_samples
         
-        fig = plt.figure(figsize=(16, 4 * n_samples))
+        fig = plt.figure(figsize=(16, 4.5 * n_samples))
+        plt.subplots_adjust(hspace=0.4)  # Increase vertical spacing
         
         for i in range(n_samples):
             # Original image
             ax1 = plt.subplot(n_rows, n_cols, i * n_cols + 1)
             ax1.imshow(images[i])
-            ax1.set_title('Input Image' if i == 0 else '', fontweight='bold')
+            ax1.set_title('Input Image' if i == 0 else '', fontweight='bold', fontsize=16)
             ax1.axis('off')
             
             # Ground truth mask
             ax2 = plt.subplot(n_rows, n_cols, i * n_cols + 2)
             ax2.imshow(masks[i], cmap='gray')
-            ax2.set_title('Ground Truth' if i == 0 else '', fontweight='bold')
+            ax2.set_title('Ground Truth' if i == 0 else '', fontweight='bold', fontsize=16)
             ax2.axis('off')
             
             # Prediction
             ax3 = plt.subplot(n_rows, n_cols, i * n_cols + 3)
             ax3.imshow(predictions[i], cmap='gray')
-            ax3.set_title('Prediction' if i == 0 else '', fontweight='bold')
+            ax3.set_title('Prediction' if i == 0 else '', fontweight='bold', fontsize=16)
             ax3.axis('off')
             
             # Overlay
@@ -261,16 +320,17 @@ class PredictionVisualizer:
             
             ax4.imshow(mask_overlay)
             ax4.imshow(pred_overlay)
-            ax4.set_title('Overlay (GT: Green, Pred: Red)' if i == 0 else '', fontweight='bold')
+            ax4.set_title('Overlay (GT: Green, Pred: Red)' if i == 0 else '', fontweight='bold', fontsize=16)
             ax4.axis('off')
             
-            # Add metrics text
-            metrics_text = f"Sample {i+1}\nDice: {metrics[i]['dice']:.3f}\nIoU: {metrics[i]['iou']:.3f}"
-            ax1.text(0.02, 0.98, metrics_text, transform=ax1.transAxes, 
-                    verticalalignment='top', bbox=dict(boxstyle='round', facecolor='white', alpha=0.8),
-                    fontsize=10)
+            # Add metrics text below the prediction and overlay
+            ax3.text(0.5, -0.15, f"Dice: {metrics[i]['dice']:.3f}", transform=ax3.transAxes,
+                    horizontalalignment='center', fontsize=11, fontweight='bold')
+            
+            ax4.text(0.5, -0.15, f"IoU: {metrics[i]['iou']:.3f}", transform=ax4.transAxes,
+                    horizontalalignment='center', fontsize=11, fontweight='bold')
         
-        plt.suptitle('Lesion Boundary Segmentation Results', fontsize=16, fontweight='bold')
+        plt.suptitle('Lesion Boundary Segmentation Results', fontsize=20, fontweight='bold')
         plt.tight_layout()
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
         plt.close()
@@ -320,28 +380,28 @@ class PredictionVisualizer:
         img = (img - img.min()) / (img.max() - img.min())
         
         # Create detailed visualization
-        fig = plt.figure(figsize=(20, 12))
-        gs = GridSpec(3, 4, hspace=0.3, wspace=0.2)
+        fig = plt.figure(figsize=(20, 10))
+        gs = GridSpec(2, 4, hspace=0.5, wspace=0.2)
         
         # Main comparison (top row)
         ax1 = fig.add_subplot(gs[0, 0])
         ax1.imshow(img)
-        ax1.set_title('Original Image', fontsize=14, fontweight='bold')
+        ax1.set_title('Original Image', fontsize=20, fontweight='bold')
         ax1.axis('off')
         
         ax2 = fig.add_subplot(gs[0, 1])
         ax2.imshow(mask_np, cmap='gray')
-        ax2.set_title('Ground Truth Mask', fontsize=14, fontweight='bold')
+        ax2.set_title('Ground Truth Mask', fontsize=20, fontweight='bold')
         ax2.axis('off')
         
         ax3 = fig.add_subplot(gs[0, 2])
         ax3.imshow(pred_np, cmap='hot')
-        ax3.set_title('Prediction (Probability)', fontsize=14, fontweight='bold')
+        ax3.set_title('Prediction (Probability)', fontsize=20, fontweight='bold')
         ax3.axis('off')
         
         ax4 = fig.add_subplot(gs[0, 3])
         ax4.imshow(pred_np > 0.5, cmap='gray')
-        ax4.set_title('Binary Prediction', fontsize=14, fontweight='bold')
+        ax4.set_title('Binary Prediction', fontsize=20, fontweight='bold')
         ax4.axis('off')
         
         # Overlays (middle row)
@@ -350,7 +410,7 @@ class PredictionVisualizer:
         mask_overlay = np.zeros((*mask_np.shape, 4))
         mask_overlay[mask_np > 0.5] = [0, 1, 0, 0.6]
         ax5.imshow(mask_overlay)
-        ax5.set_title('Image + Ground Truth', fontsize=14, fontweight='bold')
+        ax5.set_title('Image + Ground Truth', fontsize=20, fontweight='bold')
         ax5.axis('off')
         
         ax6 = fig.add_subplot(gs[1, 1])
@@ -358,7 +418,7 @@ class PredictionVisualizer:
         pred_overlay = np.zeros((*pred_np.shape, 4))
         pred_overlay[pred_np > 0.5] = [1, 0, 0, 0.6]
         ax6.imshow(pred_overlay)
-        ax6.set_title('Image + Prediction', fontsize=14, fontweight='bold')
+        ax6.set_title('Image + Prediction', fontsize=20, fontweight='bold')
         ax6.axis('off')
         
         # Error analysis
@@ -366,7 +426,7 @@ class PredictionVisualizer:
         pred_binary = (pred_np > 0.5).astype(np.float32)
         error_map = np.abs(mask_np - pred_binary)
         ax7.imshow(error_map, cmap='Reds')
-        ax7.set_title('Error Map', fontsize=14, fontweight='bold')
+        ax7.set_title('Error Map', fontsize=20, fontweight='bold')
         ax7.axis('off')
         
         # Combined overlay
@@ -374,33 +434,38 @@ class PredictionVisualizer:
         ax8.imshow(img)
         ax8.imshow(mask_overlay)
         ax8.imshow(pred_overlay)
-        ax8.set_title('Combined Overlay', fontsize=14, fontweight='bold')
+        ax8.set_title('Combined Overlay', fontsize=20, fontweight='bold')
         ax8.axis('off')
         
-        # Metrics and analysis (bottom row)
-        ax9 = fig.add_subplot(gs[2, :])
-        ax9.axis('off')
-        
-        # Calculate detailed metrics
+        # Add metrics below each image in the first row
         metrics = self.calculate_sample_metrics(mask_np, pred_binary)
         
-        metrics_text = f"""
-        QUANTITATIVE METRICS:
-        • Dice Coefficient: {metrics['dice']:.4f}
-        • IoU Score: {metrics['iou']:.4f}
-        • Pixel Accuracy: {metrics['pixel_accuracy']:.4f}
+        # Original Image - no metrics needed
         
-        SAMPLE STATISTICS:
-        • Ground Truth Area: {np.sum(mask_np > 0.5)} pixels
-        • Predicted Area: {np.sum(pred_binary > 0.5)} pixels
-        • Image Size: {img.shape[0]} × {img.shape[1]}
-        • Prediction Confidence: {np.mean(pred_np):.4f}
-        """
+        # Ground Truth Mask - add area information
+        ax2.text(0.5, -0.1, f"Area: {np.sum(mask_np > 0.5)} pixels", 
+                 transform=ax2.transAxes, fontsize=14, fontweight='bold',
+                 horizontalalignment='center')
         
-        ax9.text(0.1, 0.8, metrics_text, transform=ax9.transAxes, fontsize=12,
-                verticalalignment='top', bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.8))
+        # Prediction Probability - add confidence
+        ax3.text(0.5, -0.1, f"Mean Confidence: {np.mean(pred_np):.4f}", 
+                 transform=ax3.transAxes, fontsize=14, fontweight='bold',
+                 horizontalalignment='center')
         
-        plt.suptitle(f'Detailed Prediction Analysis - Sample {sample_idx}', fontsize=16, fontweight='bold')
+        # Binary Prediction - add dice and IoU
+        ax4.text(0.5, -0.15, f"Dice: {metrics['dice']:.4f} | IoU: {metrics['iou']:.4f}", 
+                 transform=ax4.transAxes, fontsize=14, fontweight='bold',
+                 horizontalalignment='center')
+        ax4.text(0.5, -0.05, f"Area: {np.sum(pred_binary > 0.5)} pixels", 
+                 transform=ax4.transAxes, fontsize=14, fontweight='bold',
+                 horizontalalignment='center')
+        
+        # Add metrics to combined overlay
+        ax8.text(0.5, -0.1, f"Pixel Accuracy: {metrics['pixel_accuracy']:.4f}", 
+                 transform=ax8.transAxes, fontsize=14, fontweight='bold',
+                 horizontalalignment='center')
+        
+        plt.suptitle(f'Lesion Segmentation Analysis - Sample {sample_idx}', fontsize=20, fontweight='bold')
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
         plt.close()
         

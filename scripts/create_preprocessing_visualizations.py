@@ -68,7 +68,7 @@ def create_comparison_visualization(input_dir: str, output_dir: str,
         axes[1, i].set_title(f"Advanced\n{file_path.stem}", fontsize=10)
         axes[1, i].axis('off')
     
-    plt.suptitle("Original vs Advanced Processed Images", fontsize=14, fontweight='bold')
+    plt.suptitle("Original vs Advanced Processed Images", fontsize=16, fontweight='bold')
     plt.tight_layout()
     
     # Save visualization
@@ -129,7 +129,7 @@ def create_edge_enhancement_demo(input_dir: str, output_dir: str, save_path: str
         axes[i, 1].axis('off')
     
     plt.suptitle("Edge Enhancement & Contrast Improvement Results", 
-                 fontsize=14, fontweight='bold')
+                 fontsize=16, fontweight='bold')
     plt.tight_layout()
     
     if save_path is None:
