@@ -201,7 +201,7 @@ class ModelAnalyzer:
                 if j == 0:
                     plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
         
-        plt.suptitle('Feature Map Evolution Through U-Net', fontsize=16, fontweight='bold')
+        plt.suptitle('Feature Map Evolution Through U-Net', fontsize=20, fontweight='bold')
         plt.tight_layout()
         
         save_path = save_dir / "feature_maps_evolution.png"
@@ -276,7 +276,7 @@ class ModelAnalyzer:
             ax4.grid(True, alpha=0.3)
         else:
             ax4.text(0.5, 0.5, 'No bias parameters\nfound in model', 
-                    ha='center', va='center', transform=ax4.transAxes, fontsize=14)
+                    ha='center', va='center', transform=ax4.transAxes, fontsize=16)
             ax4.set_title('Bias Analysis', fontweight='bold')
         
         plt.tight_layout()
@@ -339,7 +339,7 @@ class ModelAnalyzer:
                 ax_att.axis('off')
                 plt.colorbar(im, ax=ax_att, fraction=0.046, pad=0.04)
         
-        plt.suptitle('Attention Maps at Different Network Depths', fontsize=16, fontweight='bold')
+        plt.suptitle('Attention Maps at Different Network Depths', fontsize=20, fontweight='bold')
         plt.tight_layout()
         
         save_path = save_dir / "attention_maps.png"

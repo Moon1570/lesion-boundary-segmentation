@@ -203,7 +203,7 @@ class PublicationVisualizer:
         ax5 = fig.add_subplot(gs[2, 1])
         self._plot_gpu_memory(ax5, scalar_data)
         
-        plt.suptitle('Training Progress: Lesion Boundary Segmentation', fontsize=16, fontweight='bold')
+        plt.suptitle('Training Progress: Lesion Boundary Segmentation', fontsize=20, fontweight='bold')
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
         plt.close()
         
@@ -400,12 +400,12 @@ class PublicationVisualizer:
         ax.set_xlim(0, 1)
         ax.set_ylim(0, 1)
         ax.set_title('U-Net Architecture for Lesion Boundary Segmentation', 
-                    fontsize=14, fontweight='bold', pad=20)
+                    fontsize=16, fontweight='bold', pad=20)
         
         # Add legend
-        ax.text(0.05, 0.95, 'Encoder Path', fontsize=12, fontweight='bold', 
+        ax.text(0.05, 0.95, 'Encoder Path', fontsize=14, fontweight='bold', 
                bbox=dict(boxstyle="round,pad=0.3", facecolor='lightblue'))
-        ax.text(0.75, 0.95, 'Decoder Path', fontsize=12, fontweight='bold',
+        ax.text(0.75, 0.95, 'Decoder Path', fontsize=14, fontweight='bold',
                bbox=dict(boxstyle="round,pad=0.3", facecolor='lightgreen'))
         
         # Remove axes
@@ -446,7 +446,7 @@ class PublicationVisualizer:
         # The prediction image typically contains multiple samples
         # We'll create a cleaner version for the paper
         fig, axes = plt.subplots(2, 3, figsize=(15, 10))
-        fig.suptitle('Lesion Boundary Segmentation Results', fontsize=16, fontweight='bold')
+        fig.suptitle('Lesion Boundary Segmentation Results', fontsize=20, fontweight='bold')
         
         # Add sample predictions (you might need to adapt this based on your actual prediction format)
         for i in range(6):
@@ -525,7 +525,7 @@ class PublicationVisualizer:
                 else:
                     cell.set_facecolor('#f0f0f0' if i % 2 == 0 else 'white')
         
-        plt.title('Training Results Summary', fontsize=16, fontweight='bold', pad=20)
+        plt.title('Training Results Summary', fontsize=20, fontweight='bold', pad=20)
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
         plt.close()
         
