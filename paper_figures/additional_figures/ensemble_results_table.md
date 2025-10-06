@@ -1,11 +1,7 @@
-# Ensemble Performance Results
-
-| Metric             |   Value | Improvement   |
-|:-------------------|--------:|:--------------|
-| Dice Coefficient   |  0.8753 | +0.0085       |
-| IoU                |  0.8003 | +0.0156       |
-| Boundary IoU       |  0.1502 | +-0.0008      |
-| Precision          |  0.8958 | +-0.0007      |
-| Sensitivity        |  0.8891 | +-0.0008      |
-| Specificity        |  0.9701 | +-0.0009      |
-| Hausdorff Distance | 37.23   | --0.28        |
+| Model             |   Dice | IoU    | Pixel Accuracy   | Boundary IoU   | Improvement over Best Component   |
+|:------------------|-------:|:-------|:-----------------|:---------------|:----------------------------------|
+| Enhanced Ensemble | 0.8753 | 0.8003 | 0.9435           | 0.1502         | 0.36%                             |
+| attention_unet    | 0.8722 | N/A    | N/A              | N/A            | 0.36%                             |
+| attention_unet    | 0.8691 | N/A    | N/A              | N/A            | 0.71%                             |
+| custom_unet       | 0.863  | N/A    | N/A              | N/A            | 1.43%                             |
+| custom_unet       | 0.863  | N/A    | N/A              | N/A            | 1.43%                             |

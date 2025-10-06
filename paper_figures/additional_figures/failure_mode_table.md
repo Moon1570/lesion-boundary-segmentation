@@ -1,12 +1,14 @@
-# Model Failure Mode Analysis
+| Failure Mode          | DuaSkinSeg | Lightweight DuaSkinSeg | Enhanced Ensemble | Attention U-Net | Custom U-Net | MONAI U-Net |
+|-----------------------|------------|------------|------------|------------|------------|------------|
+| Small Lesions | Good | Good | Good | Good | Fair | Poor |
+| Irregular Boundaries | Very Good | Very Good | Very Good | Good | Good | Fair |
+| Low Contrast | Good | Good | Very Good | Good | Fair | Poor |
+| Hair Occlusions | Fair | Fair | Good | Good | Poor | Poor |
+| Artifacts | Very Good | Very Good | Good | Fair | Fair | Good |
+| Similar Color to Skin | Good | Good | Good | Good | Good | Fair |
 
-Legend: ++ Very Good (<15%), + Good (<25%), ! Fair (<35%), X Poor (≥35%)
-
-| Failure Mode          | DuaSkinSeg   | Lightweight DuaSkinSeg   | Attention U-Net   | Custom U-Net   | MONAI U-Net   |
-|:----------------------|:-------------|:-------------------------|:------------------|:---------------|:--------------|
-| Small Lesions         | 10% ++       | 10% ++                   | 15% +             | 20% +          | 25% !         |
-| Irregular Boundaries  | 10% ++       | 15% +                    | 20% +             | 30% !          | 35% X         |
-| Low Contrast          | 15% +        | 20% +                    | 10% ++            | 25% !          | 15% +         |
-| Hair Occlusions       | 15% +        | 20% +                    | 25% !             | 30% !          | 40% X         |
-| Artifacts             | 10% ++       | 15% +                    | 20% +             | 15% +          | 10% ++        |
-| Similar Color to Skin | 10% ++       | 10% ++                   | 15% +             | 20% +          | 30% !         |
+**Legend**: 
+- Very Good: <15% failure rate 
+- Good: <25% failure rate
+- Fair: <35% failure rate
+- Poor: >=35% failure rate

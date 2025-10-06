@@ -1,0 +1,92 @@
+{
+  "model": {
+    "name": "hypermamba",
+    "variant": "standard",
+    "n_channels": 3,
+    "n_classes": 1,
+    "comment": "HyperMamba Standard: ~13M params, premium performance targeting >91% DSC"
+  },
+  "data": {
+    "data_dir": "data/ISIC2018_proc",
+    "splits_dir": "splits",
+    "batch_size": 8,
+    "num_workers": 4,
+    "image_size": 384,
+    "pin_memory": true,
+    "use_test_split": false,
+    "augmentations": {
+      "enabled": true,
+      "rotation": 25,
+      "flip_prob": 0.5,
+      "brightness": 0.2,
+      "contrast": 0.2,
+      "hue": 0.08,
+      "saturation": 0.2,
+      "elastic_transform": true,
+      "gaussian_noise": 0.015
+    }
+  },
+  "loss": {
+    "name": "advanced_combined",
+    "weights": {
+      "bce": 0.2,
+      "focal": 0.3,
+      "dice": 0.25,
+      "tversky": 0.15,
+      "iou": 0.1
+    },
+    "focal_alpha": 1.0,
+    "focal_gamma": 3.0,
+    "tversky_alpha": 0.25,
+    "tversky_beta": 0.75
+  },
+  "optimizer": {
+    "name": "adamw",
+    "lr": 0.0003,
+    "weight_decay": 0.0008,
+    "betas": [0.9, 0.999],
+    "eps": 1e-8
+  },
+  "scheduler": {
+    "name": "cosine_warmup",
+    "warmup_epochs": 10,
+    "T_max": 150,
+    "eta_min": 1e-9,
+    "warmup_factor": 0.05
+  },
+  "training": {
+    "epochs": 150,
+    "use_amp": true,
+    "vis_freq": 5,
+    "validate_every": 1,
+    "save_best_only": false,
+    "gradient_clipping": 0.8,
+    "label_smoothing": 0.03
+  },
+  "callbacks": {
+    "early_stopping": {
+      "patience": 30,
+      "min_delta": 0.00005,
+      "mode": "max",
+      "monitor": "val_dice"
+    },
+    "model_checkpoint": {
+      "monitor": "val_dice",
+      "mode": "max",
+      "save_top_k": 8
+    },
+    "reduce_lr": {
+      "monitor": "val_dice",
+      "factor": 0.3,
+      "patience": 18,
+      "min_lr": 1e-10,
+      "mode": "max"
+    }
+  },
+  "output_dir": "runs/hypermamba_standard",
+  "logging": {
+    "tensorboard": true,
+    "log_every": 8,
+    "save_predictions": true
+  }
+}

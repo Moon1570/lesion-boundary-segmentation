@@ -61,6 +61,8 @@ checkpoint_*.pth
 training.log
 debug.log
 
+paper_figures/*
+
 # Temporary files
 *.tmp
 *.temp
