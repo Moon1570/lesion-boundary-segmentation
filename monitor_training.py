@@ -138,7 +138,7 @@ TRAINING STATUS
         """
         
         ax1.text(0.05, 0.95, status_text, transform=ax1.transAxes, 
-                fontsize=12, verticalalignment='top', fontfamily='monospace',
+                fontsize=14, verticalalignment='top', fontfamily='monospace',
                 bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.8))
         
         # 2. System Resource Usage
@@ -216,7 +216,7 @@ MODEL ARCHITECTURE
         
         # Add timestamp
         fig.suptitle(f'Lesion Segmentation Training Monitor - {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}', 
-                    fontsize=16, fontweight='bold')
+                    fontsize=20, fontweight='bold')
         
         # Save dashboard
         dashboard_path = self.figs_dir / f"training_dashboard_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"

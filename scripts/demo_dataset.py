@@ -92,7 +92,7 @@ def demonstrate_augmentations():
         axes[2, i].set_title(f"Aug Overlay {i}")
         axes[2, i].axis('off')
     
-    plt.suptitle(f"Augmentation Effects on Image: {val_sample['image_id']}", fontsize=16)
+    plt.suptitle(f"Augmentation Effects on Image: {val_sample['image_id']}", fontsize=20)
     plt.tight_layout()
     
     # Ensure runs/figs directory exists

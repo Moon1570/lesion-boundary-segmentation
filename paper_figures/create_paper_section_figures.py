@@ -119,8 +119,8 @@ for i, (bar, param) in enumerate(zip(bars, parameters)):
              ha='center', va='bottom', fontsize=10, rotation=0,
              bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="gray", alpha=0.8))
 
-ax1.set_ylabel('Dice Coefficient', fontsize=14)
-ax1.set_title('Baseline Model Performance Comparison', fontsize=16)
+ax1.set_ylabel('Dice Coefficient', fontsize=16)
+ax1.set_title('Baseline Model Performance Comparison', fontsize=20)
 ax1.set_ylim(0.84, 0.89)
 ax1.grid(axis='y', linestyle='--', alpha=0.7)
 
@@ -146,8 +146,8 @@ for bar in bars2:
     ax2.text(bar.get_x() + bar.get_width()/2., height + 0.01,
             f"{height:.3f}", ha='center', va='bottom', fontsize=9)
 
-ax2.set_ylabel('Score', fontsize=12)
-ax2.set_title('IoU Metrics', fontsize=14)
+ax2.set_ylabel('Score', fontsize=14)
+ax2.set_title('IoU Metrics', fontsize=16)
 ax2.set_xticks(x)
 ax2.set_xticklabels(model_names, rotation=30, ha='right', fontsize=10)
 ax2.legend()
@@ -190,7 +190,7 @@ for i, idx in enumerate(top3_indices):
 # Customize radar chart
 ax3.set_xticks(angles[:-1])
 ax3.set_xticklabels(categories, size=8)
-ax3.set_title('Top 3 Models', fontsize=14)
+ax3.set_title('Top 3 Models', fontsize=16)
 ax3.legend(loc='upper right', bbox_to_anchor=(0.2, 0.1), fontsize=8)
 
 fig.tight_layout()
@@ -241,8 +241,8 @@ bars = ax1.bar(model_names_with_ensemble, dice_with_ensemble, color=colors_with_
 for i, v in enumerate(dice_with_ensemble):
     ax1.text(i, v + 0.0015, f"{v:.4f}", ha='center', fontsize=11, fontweight='bold')
 
-ax1.set_ylabel('Dice Coefficient', fontsize=14)
-ax1.set_title('Ensemble vs Individual Models', fontsize=16)
+ax1.set_ylabel('Dice Coefficient', fontsize=16)
+ax1.set_title('Ensemble vs Individual Models', fontsize=20)
 ax1.set_ylim(0.86, 0.89)
 ax1.grid(axis='y', linestyle='--', alpha=0.7)
 
@@ -269,7 +269,7 @@ ax2.bar(0, 5, width=0.6, color='lightgrey', alpha=0.3)
 ax2.bar(0, gauge_height, width=0.6, color=cmap(0.7))
 
 # Add improvement text
-ax2.text(0, gauge_height + 0.2, f"+{improvement_percentage:.2f}%", ha='center', fontsize=14, fontweight='bold')
+ax2.text(0, gauge_height + 0.2, f"+{improvement_percentage:.2f}%", ha='center', fontsize=16, fontweight='bold')
 ax2.text(0, gauge_height/2, "Improvement\nover average\ncomponent", ha='center', va='center', fontsize=11)
 
 # Remove axis details
@@ -281,7 +281,7 @@ ax2.spines['top'].set_visible(False)
 ax2.spines['right'].set_visible(False)
 ax2.spines['bottom'].set_visible(False)
 ax2.spines['left'].set_visible(False)
-ax2.set_title('Ensemble Improvement', fontsize=16)
+ax2.set_title('Ensemble Improvement', fontsize=20)
 
 # 3. Detailed metric comparison
 ax3 = fig.add_subplot(gs[1, :])
@@ -323,8 +323,8 @@ for i, (values, color, name) in enumerate(zip(metric_values, top_model_colors, t
             ax3.text(bar.get_x() + bar.get_width()/2., height + 0.01,
                    f"{height:.3f}", ha='center', va='bottom', fontsize=8)
 
-ax3.set_ylabel('Score', fontsize=14)
-ax3.set_title('Detailed Metric Comparison', fontsize=16)
+ax3.set_ylabel('Score', fontsize=16)
+ax3.set_title('Detailed Metric Comparison', fontsize=20)
 ax3.set_xticks(x)
 ax3.set_xticklabels(metric_labels)
 ax3.legend()
@@ -405,9 +405,9 @@ for i, name in enumerate(model_names):
                 xytext=(5, 0), textcoords='offset points', 
                 fontsize=10, ha='left')
 
-ax1.set_xlabel('Efficiency Score', fontsize=14)
-ax1.set_ylabel('Dice Coefficient', fontsize=14)
-ax1.set_title('Performance vs Efficiency', fontsize=16)
+ax1.set_xlabel('Efficiency Score', fontsize=16)
+ax1.set_ylabel('Dice Coefficient', fontsize=16)
+ax1.set_title('Performance vs Efficiency', fontsize=20)
 ax1.grid(True, linestyle='--', alpha=0.7)
 
 # 2. Bubble chart for resource trade-offs
@@ -431,9 +431,9 @@ for i, name in enumerate(model_names):
                 xytext=(5, 0), textcoords='offset points', 
                 fontsize=10, ha='left')
 
-ax2.set_xlabel('GPU Memory (GB)', fontsize=14)
-ax2.set_ylabel('Inference Time (s)', fontsize=14)
-ax2.set_title('Resource Usage Trade-offs', fontsize=16)
+ax2.set_xlabel('GPU Memory (GB)', fontsize=16)
+ax2.set_ylabel('Inference Time (s)', fontsize=16)
+ax2.set_title('Resource Usage Trade-offs', fontsize=20)
 ax2.grid(True, linestyle='--', alpha=0.7)
 
 # 3. Radar chart for resource efficiency
@@ -484,7 +484,7 @@ for i, (values, color, name) in enumerate(zip(normalized_metrics, colors, model_
 # Customize radar chart
 ax3.set_xticks(angles[:-1])
 ax3.set_xticklabels(categories, size=12)
-ax3.set_title('Resource Efficiency Comparison', fontsize=16)
+ax3.set_title('Resource Efficiency Comparison', fontsize=20)
 ax3.legend(loc='upper right', fontsize=10)
 
 fig.tight_layout()
@@ -580,8 +580,8 @@ for i, (name, failures) in enumerate(failure_data.items()):
     bars = ax.bar(position, failures, width, label=name, color=colors[i], alpha=0.8)
 
 # Customize plot
-ax.set_ylabel('Failure Rate', fontsize=14)
-ax.set_title('Failure Mode Analysis by Model', fontsize=16)
+ax.set_ylabel('Failure Rate', fontsize=16)
+ax.set_title('Failure Mode Analysis by Model', fontsize=20)
 ax.set_xticks(x)
 ax.set_xticklabels(failure_modes)
 ax.legend()

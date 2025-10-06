@@ -120,9 +120,9 @@ for i, name in enumerate(model_names):
         )
 
 # Set axis labels and title
-ax.set_xlabel('Number of Parameters (Millions)', fontsize=14)
-ax.set_ylabel('Dice Similarity Coefficient', fontsize=14)
-ax.set_title('Model Performance vs Parameter Count', fontsize=16)
+ax.set_xlabel('Number of Parameters (Millions)', fontsize=16)
+ax.set_ylabel('Dice Similarity Coefficient', fontsize=16)
+ax.set_title('Model Performance vs Parameter Count', fontsize=20)
 
 # Add legend for bubble size
 sizes = [2.8, 4.2, 6.8, 8.0]
@@ -139,7 +139,7 @@ leg = ax.legend(
     scatterpoints=1,
     loc="lower left",
     fontsize=10,
-    title_fontsize=12
+    title_fontsize=14
 )
 
 # Grid and tick customization
@@ -202,7 +202,7 @@ plt.xticks(angles[:-1], categories, size=14)
 # Draw the y-axis labels (0.8 to 1.0)
 ax.set_ylim(0.7, 1.0)
 ax.set_yticks([0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0])
-ax.set_yticklabels(['0.7', '0.75', '0.8', '0.85', '0.9', '0.95', '1.0'], fontsize=12)
+ax.set_yticklabels(['0.7', '0.75', '0.8', '0.85', '0.9', '0.95', '1.0'], fontsize=14)
 
 # Plot each model
 for i, (model, color) in enumerate(zip(radar_data, top_model_colors)):
@@ -212,7 +212,7 @@ for i, (model, color) in enumerate(zip(radar_data, top_model_colors)):
     ax.fill(angles, values, color=color, alpha=0.1)
 
 # Add legend
-plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1), fontsize=14)
+plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1), fontsize=16)
 
 # Add title
 plt.title('Performance Metrics Comparison', size=16, y=1.1)
@@ -248,25 +248,25 @@ bars3 = ax.bar(positions + barWidth/2, norm_memory, barWidth, label='GPU Memory 
 bars4 = ax.bar(positions + barWidth*1.5, norm_time, barWidth, label='Inference Time (s)', color='#d62728', alpha=0.8)
 
 # Add x-axis ticks
-plt.xlabel('Model', fontsize=14)
-plt.ylabel('Normalized Value', fontsize=14)
-plt.title('Model Efficiency Comparison', fontsize=16)
-plt.xticks(positions, model_display_names, rotation=30, ha='right', fontsize=12)
+plt.xlabel('Model', fontsize=16)
+plt.ylabel('Normalized Value', fontsize=16)
+plt.title('Model Efficiency Comparison', fontsize=20)
+plt.xticks(positions, model_display_names, rotation=30, ha='right', fontsize=14)
 
 # Create legend
-plt.legend(fontsize=12)
+plt.legend(fontsize=14)
 
 # Create twin axis for efficiency score
 ax2 = ax.twinx()
 ax2.plot(positions, efficiency_scores, 'o-', color='purple', linewidth=2, markersize=8, label='Efficiency Score')
-ax2.set_ylabel('Efficiency Score (1-10)', color='purple', fontsize=14)
+ax2.set_ylabel('Efficiency Score (1-10)', color='purple', fontsize=16)
 ax2.tick_params(axis='y', labelcolor='purple')
 ax2.set_ylim(5, 10)
 
 # Combine legends from both axes
 lines, labels = ax.get_legend_handles_labels()
 lines2, labels2 = ax2.get_legend_handles_labels()
-ax.legend(lines + lines2, labels + labels2, loc='upper right', fontsize=12)
+ax.legend(lines + lines2, labels + labels2, loc='upper right', fontsize=14)
 
 # Set grid
 ax.grid(axis='y', linestyle='--', alpha=0.7)
@@ -324,9 +324,9 @@ for i, score in enumerate(efficiency_scores):
     )
 
 # Set axis labels and title
-ax.set_xlabel('GPU Memory Usage (GB)', fontsize=14)
-ax.set_ylabel('Dice Similarity Coefficient', fontsize=14)
-ax.set_title('Model Performance vs GPU Memory Usage', fontsize=16)
+ax.set_xlabel('GPU Memory Usage (GB)', fontsize=16)
+ax.set_ylabel('Dice Similarity Coefficient', fontsize=16)
+ax.set_title('Model Performance vs GPU Memory Usage', fontsize=20)
 
 # Set y-axis limits to focus on the relevant range
 ax.set_ylim(0.84, 0.885)
@@ -374,9 +374,9 @@ for i, name in enumerate(model_names):
     )
 
 # Set axis labels and title
-ax_main.set_xlabel('GPU Memory Usage (GB)', fontsize=14)
-ax_main.set_ylabel('Dice Similarity Coefficient', fontsize=14)
-ax_main.set_title('Performance vs Resource Usage (Color = Efficiency)', fontsize=16)
+ax_main.set_xlabel('GPU Memory Usage (GB)', fontsize=16)
+ax_main.set_ylabel('Dice Similarity Coefficient', fontsize=16)
+ax_main.set_title('Performance vs Resource Usage (Color = Efficiency)', fontsize=20)
 
 # Set y-axis limits to focus on the relevant range
 ax_main.set_ylim(0.84, 0.885)
@@ -389,7 +389,7 @@ ax_main.tick_params(axis='both', which='major', labelsize=12)
 cbar = plt.colorbar(plt.cm.ScalarMappable(cmap=plt.cm.viridis, 
                                          norm=plt.Normalize(6, 10)),
                    ax=ax_main)
-cbar.set_label('Efficiency Score', fontsize=12)
+cbar.set_label('Efficiency Score', fontsize=14)
 
 # 2. Parameter breakdown - pie charts
 ax_pie = fig.add_subplot(gs[0, 2])
@@ -408,7 +408,7 @@ values2 = [component["percentage"] for component in lightweight_data.values()]
 ax_pie.pie(values1, labels=None, autopct='%1.1f%%', startangle=90, colors=plt.cm.tab10.colors[:4], 
          wedgeprops={'edgecolor': 'w', 'linewidth': 1, 'alpha': 0.7})
 ax_pie.add_artist(plt.Circle((0, 0), 0.3, fc='white'))
-ax_pie.set_title('DuaSkinSeg Architecture Breakdown', fontsize=14)
+ax_pie.set_title('DuaSkinSeg Architecture Breakdown', fontsize=16)
 
 # Add custom legend
 ax_pie.legend(labels1, title="Components", loc="center", bbox_to_anchor=(0.5, 0.5), fontsize=10)
@@ -440,9 +440,9 @@ for i, (name, color) in enumerate(zip(model_names, colors)):
 
 # Customize bar chart
 ax_metrics.set_xticks(bar_positions)
-ax_metrics.set_xticklabels(metrics_display, fontsize=12)
-ax_metrics.set_ylabel("Score", fontsize=14)
-ax_metrics.set_title("Performance Metrics Comparison", fontsize=16)
+ax_metrics.set_xticklabels(metrics_display, fontsize=14)
+ax_metrics.set_ylabel("Score", fontsize=16)
+ax_metrics.set_title("Performance Metrics Comparison", fontsize=20)
 ax_metrics.legend(fontsize=10, loc='upper right')
 ax_metrics.set_ylim(0, 1.0)
 ax_metrics.grid(axis='y', linestyle='--', alpha=0.7)
